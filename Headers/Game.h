@@ -1,10 +1,12 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <math.h>
 
 #include "ResourceHolder.hpp"
 #include "Enums.h"
 #include "LaserGun.h"
+#include "Laser.h"
 
 class Game {
 private:
@@ -14,6 +16,7 @@ private:
 	sf::Sprite background;
 	sf::Sprite field;
 	LaserGun* gun;
+	Laser* laser;
 
 public:
 	Game();
@@ -26,5 +29,7 @@ private:
 	void processEvents();
 	void update();
 	void render();
+
+	void calcLaserTarget();
 };
 
