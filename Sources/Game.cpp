@@ -5,6 +5,8 @@ void Game::loadAssets()
 	texturesHolder.load(Textures::Background, "assets/textures/background.png");
 	texturesHolder.load(Textures::Field, "assets/textures/field.png");
 	texturesHolder.load(Textures::LaserGun, "assets/textures/gun2.png");
+	texturesHolder.load(Textures::Mirror, "assets/textures/crystal2.png");
+	texturesHolder.load(Textures::Bricks, "assets/textures/bricks.jpg");
 }
 
 Game::Game() : window(sf::VideoMode(1200, 800), "LASERS")
@@ -18,6 +20,8 @@ Game::Game() : window(sf::VideoMode(1200, 800), "LASERS")
 
 	gun = new LaserGun(&window, { 270, 230 }, texturesHolder.get(Textures::LaserGun));
 	laser = new Laser(&window, gun->getPosition());
+	walls = new WallsContainer(&window, { 500, 300 }, texturesHolder.get(Textures::Bricks));
+	mirror = new Mirror(&window, { 270, 520 }, texturesHolder.get(Textures::Mirror));
 }
 
 void Game::run()
@@ -49,6 +53,10 @@ void Game::processEvents()
 			gun->rotate(1);
 			break;
 		}
+
+	case sf::Event::MouseMoved:
+		mirror->processMouseHovering(sf::Mouse::getPosition(window));
+		break;
 	}
 }
 
@@ -66,8 +74,11 @@ void Game::render()
 
 	window.draw(background);
 	laser->draw();
+	walls->draw();
+
 	window.draw(field);
 	gun->draw();
+	mirror->draw();
 
 	window.display();
 }
@@ -89,12 +100,19 @@ void Game::calcLaserTarget()
 	// вектор направления лазера относительно пушки
 	sf::Vector2f laserDirection(gun->getPosition() + viewDirection);
 	// двигаемся в направлении взгляда пушки, пока не встретим другой объект или границу поля
-	while (field.getGlobalBounds().contains(laserDirection))
+	while (field.getGlobalBounds().contains(laserDirection) && !(walls->contains(laserDirection))) {
+		/*
+		if (mirror->processLaserTargeting(laserDirection)) {
+			laser->pushVertex(laserDirection);
+			break;
+		}
+		*/
 		laserDirection += viewDirection;
+	}
 	// отступаем на шаг назад, чтобы лазер не вылезал с противоположного края объекта или поля
 	laserDirection -= viewDirection;
 	
-	laser->pushVertex(sf::Vertex(laserDirection));
+	laser->pushVertex(laserDirection);
 }
 
 Game::~Game()

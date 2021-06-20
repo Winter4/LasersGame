@@ -147,19 +147,25 @@
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Sources\Entity.cpp" />
+    <ClCompile Include="Sources\Mirror.cpp" />
     <ClCompile Include="Sources\TexturedEntity.cpp" />
     <ClCompile Include="Sources\Game.cpp" />
     <ClCompile Include="Sources\Laser.cpp" />
     <ClCompile Include="Sources\LaserGun.cpp" />
+    <ClCompile Include="Sources\Wall.cpp" />
+    <ClCompile Include="Sources\WallsContainer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Entity.h" />
+    <ClInclude Include="Headers\Mirror.h" />
     <ClInclude Include="Headers\TexturedEntity.h" />
     <ClInclude Include="Headers\Enums.h" />
     <ClInclude Include="Headers\Game.h" />
     <ClInclude Include="Headers\Laser.h" />
     <ClInclude Include="Headers\LaserGun.h" />
     <ClInclude Include="Headers\ResourceHolder.hpp" />
+    <ClInclude Include="Headers\Wall.h" />
+    <ClInclude Include="Headers\WallsContainer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

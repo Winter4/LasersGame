@@ -4,6 +4,8 @@ namespace Textures {
 	enum ID {
 		Background,
 		Field,
-		LaserGun
+		LaserGun,
+		Mirror,
+		Bricks
 	};
 }

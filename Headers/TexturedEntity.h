@@ -15,5 +15,6 @@ public:
 	}
 
 	void virtual draw();
+	void virtual rotate(int direction);
 };
 

@@ -1,6 +1,6 @@
 #include "../Headers/Laser.h"
 
-void Laser::pushVertex(sf::Vertex vertex)
+void Laser::pushVertex(sf::Vector2f vertex)
 {
 	vertexes.push_back(vertex);
 }

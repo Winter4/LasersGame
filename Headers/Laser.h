@@ -15,7 +15,7 @@ public:
 		vertexes.push_back(gunPosition);
 	}
 
-	void pushVertex(sf::Vertex vertex);
+	void pushVertex(sf::Vector2f vertex);
 	void draw();
 };
 

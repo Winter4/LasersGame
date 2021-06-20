@@ -7,7 +7,8 @@
 #include "Enums.h"
 #include "LaserGun.h"
 #include "Laser.h"
-#include "Wall.h"
+#include "WallsContainer.h"
+#include "Mirror.h"
 
 class Game {
 private:
@@ -18,7 +19,8 @@ private:
 	sf::Sprite field;
 	LaserGun* gun;
 	Laser* laser;
-	Wall* wall;
+	WallsContainer* walls;
+	Mirror* mirror;
 
 public:
 	Game();
