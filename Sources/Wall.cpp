@@ -1,0 +1,8 @@
+#include "../Headers/Wall.h"
+
+void Wall::draw()
+{
+	window->draw(sprite);
+}
+
+bool Wall::contains(sf::Vector2f point) { return sprite.getGlobalBounds().contains(point); }
