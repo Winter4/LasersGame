@@ -9,7 +9,7 @@
 #include "LaserGun.h"
 #include "Laser.h"
 #include "WallsContainer.h"
-#include "Mirror.h"
+#include "MirrorsContainer.h"
 
 class Game {
 private:
@@ -21,7 +21,9 @@ private:
 	LaserGun* gun;
 	Laser* laser;
 	WallsContainer* walls;
-	Mirror* mirror, *mirror2;
+	MirrorsContainer* mirrors;
+
+	int activeMirror;
 
 public:
 	Game();

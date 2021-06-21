@@ -148,6 +148,7 @@
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Sources\Entity.cpp" />
     <ClCompile Include="Sources\Mirror.cpp" />
+    <ClCompile Include="Sources\MirrorsContainer.cpp" />
     <ClCompile Include="Sources\TexturedEntity.cpp" />
     <ClCompile Include="Sources\Game.cpp" />
     <ClCompile Include="Sources\Laser.cpp" />
@@ -159,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="Headers\Entity.h" />
     <ClInclude Include="Headers\Mirror.h" />
+    <ClInclude Include="Headers\MirrorsContainer.h" />
     <ClInclude Include="Headers\TexturedEntity.h" />
     <ClInclude Include="Headers\Enums.h" />
     <ClInclude Include="Headers\Game.h" />

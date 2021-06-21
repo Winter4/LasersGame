@@ -7,5 +7,5 @@ void TexturedEntity::draw()
 
 void TexturedEntity::rotate(int direction)
 {
-	sprite.rotate(3.f * direction);
+	sprite.rotate(1.f * direction);
 }

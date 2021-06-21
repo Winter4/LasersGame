@@ -19,21 +19,14 @@ void Mirror::rotate(int direction)
 		endfaces[i]->rotate(direction);
 }
 
-void Mirror::processMouseHovering(sf::Vector2i point)
+bool Mirror::checkMouseHovering(sf::Vector2i mousePosition)
 {
-	if (sprite.getGlobalBounds().contains(sf::Vector2f(point)))
-		sprite.setColor(sf::Color::Red);
-	else sprite.setColor(sf::Color::White);
-}
-
-char Mirror::processLaserTargeting(sf::Vector2f point)
-{
-	if (sprite.getGlobalBounds().contains(point))
-		return 2;
-	for (int i = 0; i < ENDFACES_NUM; i++) 
-		if (endfaces[i]->contains(point))
-			return 1;
-	return 0;
+	if (sprite.getGlobalBounds().contains(sf::Vector2f(mousePosition))) {
+		sprite.setColor(sf::Color::Yellow);
+		return true;
+	}
+	sprite.setColor(sf::Color::White);
+	return false;
 }
 
 float Mirror::calcMirroredAngle(sf::Vector2f laserVector,  float laserAngle)
@@ -57,4 +50,14 @@ float Mirror::calcMirroredAngle(sf::Vector2f laserVector,  float laserAngle)
 		: int(laserAngle + 180 + laser_mirrorNormal_angle * 2) % 360;
 
 	return newAngle;
+}
+
+std::pair<bool, char> Mirror::contains(sf::Vector2f laserTarget)
+{
+	if (sprite.getGlobalBounds().contains(laserTarget))
+		return std::make_pair(true, 2);
+	for (int i = 0; i < ENDFACES_NUM; i++)
+		if (endfaces[i]->contains(laserTarget))
+			return std::make_pair(true, 1);
+	return std::make_pair(false, 0);
 }

@@ -11,6 +11,8 @@ void Game::loadAssets()
 
 Game::Game() : window(sf::VideoMode(1200, 800), "LASERS")
 {
+	activeMirror = -1;
+
 	loadAssets();
 	window.setFramerateLimit(60);
 
@@ -18,11 +20,10 @@ Game::Game() : window(sf::VideoMode(1200, 800), "LASERS")
 	field.setTexture(texturesHolder.get(Textures::Field));
 	field.setPosition({ 165, 120 });
 
-	gun = new LaserGun(&window, { 435, 445 }, texturesHolder.get(Textures::LaserGun));
+	gun = new LaserGun(&window, { 270, 270 }, texturesHolder.get(Textures::LaserGun));
 	laser = new Laser(&window, gun->getPosition());
 	walls = new WallsContainer(&window, { -500, 300 }, texturesHolder.get(Textures::Bricks));
-	mirror = new Mirror(&window, { 270, 520 }, texturesHolder.get(Textures::Mirror));
-	//mirror2 = new Mirror(&window, { 270, 520 }, texturesHolder.get(Textures::Mirror));
+	mirrors = new MirrorsContainer(&window, texturesHolder.get(Textures::Mirror));
 }
 
 void Game::run()
@@ -55,20 +56,19 @@ void Game::processEvents()
 			break;
 
 		case sf::Keyboard::A:
-			mirror->rotate(-1);
+			if (activeMirror != -1)
+				mirrors->rotate(activeMirror, -1);
 			break;
 
 		case sf::Keyboard::D:
-			mirror->rotate(1);
+			if (activeMirror != -1)
+				mirrors->rotate(activeMirror, 1);
 			break;
 		}
-
-	case sf::Event::MouseMoved:
-		mirror->processMouseHovering(sf::Mouse::getPosition(window));
 		break;
 
-	case sf::Event::MouseWheelScrolled:
-		mirror->rotate(event.mouseWheel.delta);
+	case sf::Event::MouseMoved:
+		activeMirror = mirrors->checkMouseHovering(sf::Mouse::getPosition(window));
 		break;
 	}
 }
@@ -91,7 +91,7 @@ void Game::render()
 
 	window.draw(field);
 	gun->draw();
-	mirror->draw();
+	mirrors->draw();
 
 	window.display();
 }
@@ -124,10 +124,10 @@ void Game::calcLaserTarget()
 	// служебный флаг, чтобы выходить из цикла
 	bool flag = true;
 	// проверяем, не пришел ли лазер в стену или границу поля
+	
 	while (field.getGlobalBounds().contains(laserTarget) && !(walls->contains(laserTarget)) && flag) {
-
 		// проверяем, не пришел ли в зеркало
-		switch (mirror->processLaserTargeting(laserTarget)) {
+		switch (mirrors->checkMirrorsTargeting(laserTarget)) {
 		case DoesNotTarget:
 			break;
 
@@ -139,12 +139,12 @@ void Game::calcLaserTarget()
 			laser->pushVertex(laserTarget);
 			laserTarget -= laserVector;
 
-			laserAngle = mirror->calcMirroredAngle(laserVector, laserAngle);
-			laserVector = rotateSourceVector(laserAngle);
+			laserVector = mirrors->processLaserTargeting(laserTarget, laserVector, laserAngle);
 			break;
 		}
 		laserTarget += laserVector;
 	}
+	
 	// отступаем на шаг назад, чтобы лазер не вылезал с противоположного края объекта или поля
 	laserTarget -= laserVector;
 	std::cout << "Laser angle: " << laserAngle << std::endl;
