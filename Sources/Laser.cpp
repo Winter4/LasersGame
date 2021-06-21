@@ -8,7 +8,7 @@ void Laser::pushVertex(sf::Vector2f vertex)
 void Laser::draw()
 {
 	sf::Vertex* array = &vertexes[0];
-	window->draw(array, vertexes.size(), sf::Lines);
+	window->draw(array, vertexes.size(), sf::LinesStrip);
 
 	vertexes.clear();
 	vertexes.push_back(gunPosition);

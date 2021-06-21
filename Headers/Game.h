@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <math.h>
+#include "VectorRotating.h"
 
 #include "ResourceHolder.hpp"
 #include "Enums.h"
@@ -20,7 +21,7 @@ private:
 	LaserGun* gun;
 	Laser* laser;
 	WallsContainer* walls;
-	Mirror* mirror;
+	Mirror* mirror, *mirror2;
 
 public:
 	Game();

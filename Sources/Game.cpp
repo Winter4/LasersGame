@@ -18,10 +18,11 @@ Game::Game() : window(sf::VideoMode(1200, 800), "LASERS")
 	field.setTexture(texturesHolder.get(Textures::Field));
 	field.setPosition({ 165, 120 });
 
-	gun = new LaserGun(&window, { 270, 230 }, texturesHolder.get(Textures::LaserGun));
+	gun = new LaserGun(&window, { 435, 445 }, texturesHolder.get(Textures::LaserGun));
 	laser = new Laser(&window, gun->getPosition());
-	walls = new WallsContainer(&window, { 500, 300 }, texturesHolder.get(Textures::Bricks));
+	walls = new WallsContainer(&window, { -500, 300 }, texturesHolder.get(Textures::Bricks));
 	mirror = new Mirror(&window, { 270, 520 }, texturesHolder.get(Textures::Mirror));
+	//mirror2 = new Mirror(&window, { 270, 520 }, texturesHolder.get(Textures::Mirror));
 }
 
 void Game::run()
@@ -52,10 +53,22 @@ void Game::processEvents()
 		case sf::Keyboard::Right:
 			gun->rotate(1);
 			break;
+
+		case sf::Keyboard::A:
+			mirror->rotate(-1);
+			break;
+
+		case sf::Keyboard::D:
+			mirror->rotate(1);
+			break;
 		}
 
 	case sf::Event::MouseMoved:
 		mirror->processMouseHovering(sf::Mouse::getPosition(window));
+		break;
+
+	case sf::Event::MouseWheelScrolled:
+		mirror->rotate(event.mouseWheel.delta);
 		break;
 	}
 }
@@ -63,7 +76,7 @@ void Game::processEvents()
 void Game::update()
 {
 	system("cls");
-	std::cout << sf::Mouse::getPosition(window).x << "  " << sf::Mouse::getPosition(window).y << std::endl;
+	std::cout << "Mouse X Y:  " << sf::Mouse::getPosition(window).x << "  " << sf::Mouse::getPosition(window).y << std::endl << std::endl;
 
 	calcLaserTarget();
 }
@@ -89,30 +102,55 @@ void Game::calcLaserTarget()
 	// (0; -1) - смотрит вверх экрана
 	// 57 - коэффициент, чтобы лазер двигалс€ с такой же угловой скоростью, что и ствол пушки
 	// подобран эмпиричски (читай: методом тыка)
-	float gunAngle = gun->getAngle() / 57;
-	sf::Vector2f viewDirection(0 * cosf(gunAngle) + 1 * sinf(gunAngle),
-		0 * sinf(gunAngle) - 1 * cosf(gunAngle));
+	// изначально - вектор взгл€да пушки
+	float laserAngle = gun->getAngle();
+	sf::Vector2f laserVector = rotateSourceVector(laserAngle);
+	std::cout << "Gun angle: " << laserAngle << std::endl;
 
 	// нормализовали орт (привели к единичной длине)
-	viewDirection /= sqrt(viewDirection.x * viewDirection.x + viewDirection.y * viewDirection.y);
-	std::cout << viewDirection.x << "  " << viewDirection.y << std::endl;
+	laserVector /= sqrt(laserVector.x * laserVector.x + laserVector.y * laserVector.y);
 
-	// вектор направлени€ лазера относительно пушки
-	sf::Vector2f laserDirection(gun->getPosition() + viewDirection);
-	// двигаемс€ в направлении взгл€да пушки, пока не встретим другой объект или границу пол€
-	while (field.getGlobalBounds().contains(laserDirection) && !(walls->contains(laserDirection))) {
-		/*
-		if (mirror->processLaserTargeting(laserDirection)) {
-			laser->pushVertex(laserDirection);
+	std::cout << "Gun view vector:  " << laserVector.x << "  " << laserVector.y << std::endl << std::endl;
+
+	enum MirrorTargeting {
+		DoesNotTarget,
+		TargetsEndface,
+		TargetsMirror
+	};
+
+	// конец лазера (сюда будем прибавл€ть единичный вектор направлени€)
+	sf::Vector2f laserTarget(gun->getPosition());
+
+	// служебный флаг, чтобы выходить из цикла
+	bool flag = true;
+	// провер€ем, не пришел ли лазер в стену или границу пол€
+	while (field.getGlobalBounds().contains(laserTarget) && !(walls->contains(laserTarget)) && flag) {
+
+		// провер€ем, не пришел ли в зеркало
+		switch (mirror->processLaserTargeting(laserTarget)) {
+		case DoesNotTarget:
+			break;
+
+		case TargetsEndface:
+			flag = false;
+			break;
+
+		case TargetsMirror:
+			laser->pushVertex(laserTarget);
+			laserTarget -= laserVector;
+
+			laserAngle = mirror->calcMirroredAngle(laserVector, laserAngle);
+			laserVector = rotateSourceVector(laserAngle);
 			break;
 		}
-		*/
-		laserDirection += viewDirection;
+		laserTarget += laserVector;
 	}
 	// отступаем на шаг назад, чтобы лазер не вылезал с противоположного кра€ объекта или пол€
-	laserDirection -= viewDirection;
+	laserTarget -= laserVector;
+	std::cout << "Laser angle: " << laserAngle << std::endl;
+	std::cout << "Laser target: " << laserTarget.x << "  " << laserTarget.y << std::endl;
 	
-	laser->pushVertex(laserDirection);
+	laser->pushVertex(laserTarget);
 }
 
 Game::~Game()

@@ -152,6 +152,7 @@
     <ClCompile Include="Sources\Game.cpp" />
     <ClCompile Include="Sources\Laser.cpp" />
     <ClCompile Include="Sources\LaserGun.cpp" />
+    <ClCompile Include="Sources\VectorRotating.cpp" />
     <ClCompile Include="Sources\Wall.cpp" />
     <ClCompile Include="Sources\WallsContainer.cpp" />
   </ItemGroup>
@@ -164,6 +165,7 @@
     <ClInclude Include="Headers\Laser.h" />
     <ClInclude Include="Headers\LaserGun.h" />
     <ClInclude Include="Headers\ResourceHolder.hpp" />
+    <ClInclude Include="Headers\VectorRotating.h" />
     <ClInclude Include="Headers\Wall.h" />
     <ClInclude Include="Headers\WallsContainer.h" />
   </ItemGroup>

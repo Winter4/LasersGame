@@ -23,4 +23,5 @@ public:
 	void draw();
 	bool contains(sf::Vector2f point);
 	void setOrigin(sf::Vector2f point);
+	void rotate(int direction);
 };
