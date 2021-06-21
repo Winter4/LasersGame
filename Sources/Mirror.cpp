@@ -8,16 +8,32 @@ void Mirror::draw()
 	std::cout << std::endl << "Mirror vector: " << mirrorVector.x << "  " << mirrorVector.y << std::endl;
 	std::cout << "Mirror normal vector: " << mirrorNormalVector.x << "  " << mirrorNormalVector.y << std::endl;
 	std::cout << "Laser - normal angle: " << laser_mirrorNormal_angle << std::endl;
+
+	std::cout << "Angles: " << std::endl << " " << angles[0][0].x << "  " << angles[0][0].y
+		<< "    " << angles[0][1].x << "  " << angles[0][1].y << std::endl
+		<< " " << angles[1][0].x << "  " << angles[1][0].y << "  " << angles[1][1].x << "  " << angles[1][1].y << std::endl;
 }
 
 void Mirror::rotate(int direction)
 {
 	TexturedEntity::rotate(direction);
+
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 2; j++) {
+			// получить вектор относительно позиции фигуры
+			sf::Vector2f pos = sprite.getPosition();
+			sf::Vector2f tmp(angles[i][j] - sprite.getPosition());
+			float len = sqrt(tmp.x * tmp.x + tmp.y * tmp.y);
+
+			// повернуть вектор
+			tmp = rotateVector(direction, tmp);
+			angles[i][j] = sprite.getPosition() + tmp;
+		}
 }
 
 bool Mirror::checkMouseHovering(sf::Vector2i mousePosition)
 {
-	if (sprite.getGlobalBounds().contains(sf::Vector2f(mousePosition))) {
+	if (contains(sf::Vector2f(mousePosition))) {
 		sprite.setColor(sf::Color::Yellow);
 		return true;
 	}
@@ -51,7 +67,23 @@ float Mirror::calcMirroredAngle(sf::Vector2f laserVector,  float laserAngle)
 
 bool Mirror::contains(sf::Vector2f laserTarget)
 {
-	if (sprite.getGlobalBounds().contains(laserTarget))
-		return true;
-	return false;
+	float l1 = makeLine(laserTarget, angles[0][0], angles[0][1]);
+	float l2 = makeLine(laserTarget, angles[0][1], angles[1][1]);
+	float l3 = makeLine(laserTarget, angles[1][1], angles[1][0]);
+	float l4 = makeLine(laserTarget, angles[1][0], angles[0][0]);
+
+	// Проверяем, внутри ли всех прямых
+	return l1 < 0 && l2 < 0 && l3 < 0 && l4 < 0;
+}
+
+float Mirror::makeLine(sf::Vector2f point, sf::Vector2f dot1, sf::Vector2f dot2)
+{
+	// вывод уравнения прямой
+	// (x - x1) * (y2 - y1) - (x2 - x1) * (y - y1) ? 0
+	float m1 = (point.x - dot1.x);
+	float m2 = (dot2.y - dot1.y);
+	float m3 = (dot2.x - dot1.x);
+	float m4 = (point.y - dot1.y);
+
+	return m1 * m2 - m3 * m4;
 }
