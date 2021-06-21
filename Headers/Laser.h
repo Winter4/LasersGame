@@ -16,6 +16,7 @@ public:
 	}
 
 	void pushVertex(sf::Vector2f vertex);
+	size_t getVertexesNumber();
 	void draw();
 };
 

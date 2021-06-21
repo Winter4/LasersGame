@@ -21,8 +21,8 @@ public:
 	}
 
 	void draw();
-	char checkMirrorsTargeting(sf::Vector2f laserTarget);
-	sf::Vector2f processLaserTargeting(sf::Vector2f laserTarget, sf::Vector2f laserVector, float laserAngle);
+	bool checkMirrorsTargeting(sf::Vector2f laserTarget);
+	sf::Vector2f processLaserTargeting(sf::Vector2f laserTarget, sf::Vector2f laserVector, float& laserAngle);
 	int checkMouseHovering(sf::Vector2i mousePosition);
 	void rotate(int index, int direction);
 };

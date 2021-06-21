@@ -5,6 +5,11 @@ void Laser::pushVertex(sf::Vector2f vertex)
 	vertexes.push_back(vertex);
 }
 
+size_t Laser::getVertexesNumber()
+{
+	return vertexes.size();
+}
+
 void Laser::draw()
 {
 	sf::Vertex* array = &vertexes[0];

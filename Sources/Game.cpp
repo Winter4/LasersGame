@@ -22,7 +22,7 @@ Game::Game() : window(sf::VideoMode(1200, 800), "LASERS")
 
 	gun = new LaserGun(&window, { 270, 270 }, texturesHolder.get(Textures::LaserGun));
 	laser = new Laser(&window, gun->getPosition());
-	walls = new WallsContainer(&window, { -500, 300 }, texturesHolder.get(Textures::Bricks));
+	walls = new WallsContainer(&window, { 500, 300 }, texturesHolder.get(Textures::Bricks));
 	mirrors = new MirrorsContainer(&window, texturesHolder.get(Textures::Mirror));
 }
 
@@ -112,35 +112,25 @@ void Game::calcLaserTarget()
 
 	std::cout << "Gun view vector:  " << laserVector.x << "  " << laserVector.y << std::endl << std::endl;
 
+	// конец лазера (сюда будем прибавлять единичный вектор направления)
+	sf::Vector2f laserTarget(gun->getPosition());
+
 	enum MirrorTargeting {
 		DoesNotTarget,
 		TargetsEndface,
 		TargetsMirror
 	};
 
-	// конец лазера (сюда будем прибавлять единичный вектор направления)
-	sf::Vector2f laserTarget(gun->getPosition());
-
-	// служебный флаг, чтобы выходить из цикла
-	bool flag = true;
 	// проверяем, не пришел ли лазер в стену или границу поля
-	
-	while (field.getGlobalBounds().contains(laserTarget) && !(walls->contains(laserTarget)) && flag) {
+	while (field.getGlobalBounds().contains(laserTarget) && !(walls->contains(laserTarget))) {
 		// проверяем, не пришел ли в зеркало
-		switch (mirrors->checkMirrorsTargeting(laserTarget)) {
-		case DoesNotTarget:
-			break;
+		if (mirrors->checkMirrorsTargeting(laserTarget)) {
+			if (laser->getVertexesNumber() > 15) break;
+			else laser->pushVertex(laserTarget);
 
-		case TargetsEndface:
-			flag = false;
-			break;
-
-		case TargetsMirror:
-			laser->pushVertex(laserTarget);
 			laserTarget -= laserVector;
 
 			laserVector = mirrors->processLaserTargeting(laserTarget, laserVector, laserAngle);
-			break;
 		}
 		laserTarget += laserVector;
 	}
