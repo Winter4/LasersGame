@@ -10,11 +10,14 @@
 #include "Laser.h"
 #include "WallsContainer.h"
 #include "MirrorsContainer.h"
+#include "Button.h"
+#include "Target.h"
 
 class Game {
 private:
 	sf::RenderWindow window;
 	ResourceHolder<sf::Texture, Textures::ID> texturesHolder;
+	sf::Font font;
 
 	sf::Sprite background;
 	sf::Sprite field;
@@ -22,8 +25,12 @@ private:
 	Laser* laser;
 	WallsContainer* walls;
 	MirrorsContainer* mirrors;
+	Button* button;
+	Target* target;
 
 	int activeMirror;
+	bool makeMove;
+	bool gameOver;
 
 public:
 	Game();

@@ -14,7 +14,7 @@ public:
 	{
 		targetedMirror = -1;
 		mirrors = new Mirror * [MIRRORS_NUMBER];
-		sf::Vector2f positions[MIRRORS_NUMBER] = { {270, 570}, {770, 570}, {770, 270} };
+		sf::Vector2f positions[MIRRORS_NUMBER] = { {300, 570}, {770, 550}, {770, 270} };
 		
 		for (int i = 0; i < MIRRORS_NUMBER; i++) 
 			mirrors[i] = new Mirror(window, positions[i], texture);

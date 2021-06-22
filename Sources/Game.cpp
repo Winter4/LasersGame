@@ -7,11 +7,17 @@ void Game::loadAssets()
 	texturesHolder.load(Textures::LaserGun, "assets/textures/gun2.png");
 	texturesHolder.load(Textures::Mirror, "assets/textures/crystal2.png");
 	texturesHolder.load(Textures::Bricks, "assets/textures/bricks.jpg");
+	texturesHolder.load(Textures::Button, "assets/textures/button.png");
+	texturesHolder.load(Textures::Target, "assets/textures/target.png");
+
+	if (!(font.loadFromFile("assets/fonts/calibri.ttf"))) throw std::exception("Font loading error.");
 }
 
 Game::Game() : window(sf::VideoMode(1200, 800), "LASERS")
 {
 	activeMirror = -1;
+	makeMove = false;
+	gameOver = false;
 
 	loadAssets();
 	window.setFramerateLimit(60);
@@ -22,8 +28,10 @@ Game::Game() : window(sf::VideoMode(1200, 800), "LASERS")
 
 	gun = new LaserGun(&window, { 270, 270 }, texturesHolder.get(Textures::LaserGun));
 	laser = new Laser(&window, gun->getPosition());
-	walls = new WallsContainer(&window, { 500, 300 }, texturesHolder.get(Textures::Bricks));
+	walls = new WallsContainer(&window, { 500, 200 }, texturesHolder.get(Textures::Bricks));
 	mirrors = new MirrorsContainer(&window, texturesHolder.get(Textures::Mirror));
+	button = new Button(&window, { 165, 10 }, texturesHolder.get(Textures::Button), font);
+	target = new Target(&window, { 550, 250 }, texturesHolder.get(Textures::Target));
 }
 
 void Game::run()
@@ -69,6 +77,11 @@ void Game::processEvents()
 
 	case sf::Event::MouseMoved:
 		activeMirror = mirrors->checkMouseHovering(sf::Mouse::getPosition(window));
+		button->processMouseHovering(sf::Mouse::getPosition(window));
+		break;
+
+	case sf::Event::MouseButtonPressed:
+		makeMove = button->processMouseClick(sf::Mouse::getPosition(window));
 		break;
 	}
 }
@@ -78,7 +91,8 @@ void Game::update()
 	system("cls");
 	std::cout << "Mouse X Y:  " << sf::Mouse::getPosition(window).x << "  " << sf::Mouse::getPosition(window).y << std::endl << std::endl;
 
-	calcLaserTarget();
+	if (makeMove) calcLaserTarget();
+	if (gameOver) button->end();
 }
 
 void Game::render()
@@ -86,14 +100,24 @@ void Game::render()
 	window.clear();
 
 	window.draw(background);
-	laser->draw();
+	if (makeMove) laser->draw();
 	walls->draw();
 
 	window.draw(field);
 	gun->draw();
 	mirrors->draw();
 
+	button->draw();
+	target->draw();
+
 	window.display();
+	if (makeMove) {
+		sf::sleep(sf::seconds(1));
+		makeMove = false;
+	}
+
+	while (gameOver)
+		processEvents();
 }
 
 void Game::calcLaserTarget()
@@ -122,7 +146,7 @@ void Game::calcLaserTarget()
 	};
 
 	// проверяем, не пришел ли лазер в стену или границу поля
-	while (field.getGlobalBounds().contains(laserTarget) && !(walls->contains(laserTarget))) {
+	while (field.getGlobalBounds().contains(laserTarget) && !(walls->contains(laserTarget)) && !(target->contains(laserTarget))) {
 		// проверяем, не пришел ли в зеркало
 		if (mirrors->checkMirrorsTargeting(laserTarget)) {
 			if (laser->getVertexesNumber() > 15) break;
@@ -136,11 +160,12 @@ void Game::calcLaserTarget()
 	}
 	
 	// отступаем на шаг назад, чтобы лазер не вылезал с противоположного края объекта или поля
-	laserTarget -= laserVector;
+	//laserTarget -= laserVector;
 	std::cout << "Laser angle: " << laserAngle << std::endl;
 	std::cout << "Laser target: " << laserTarget.x << "  " << laserTarget.y << std::endl;
 	
 	laser->pushVertex(laserTarget);
+	gameOver = target->contains(laserTarget);
 }
 
 Game::~Game()

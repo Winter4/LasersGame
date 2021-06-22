@@ -28,8 +28,7 @@ public:
 		angles[1][0] = sf::Vector2f(pos.x - size.width / 2, pos.y + size.height / 2);
 		angles[1][1] = sf::Vector2f(pos.x + size.width / 2, pos.y + size.height / 2);
 
-		//rotate(360. * rand() / RAND_MAX);
-		rotate(45);
+		rotate(360. * rand() / RAND_MAX);
 	}
 
 	void draw();

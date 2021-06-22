@@ -51,6 +51,8 @@ float Mirror::calcMirroredAngle(sf::Vector2f laserVector,  float laserAngle)
 
 	// Ищем нормаль вектора зеркала
 	mirrorNormalVector = sf::Vector2f(mirrorVector.y * (-1), mirrorVector.x);
+	if (mirrorNormalVector.x * laserVector.x + mirrorNormalVector.y + laserVector.y > 0)
+		sprite.rotate(180);
 
 	// Ищем угол между вектором лазера и нормалью вектора зеркала
 	// попутно переводим из радианов в градусы
@@ -61,6 +63,8 @@ float Mirror::calcMirroredAngle(sf::Vector2f laserVector,  float laserAngle)
 	float newAngle = laserAngle > 90 && laserAngle < 270 ?
 		int(laserAngle + 180 - laser_mirrorNormal_angle * 2) % 360
 		: int(laserAngle + 180 + laser_mirrorNormal_angle * 2) % 360;
+
+
 
 	return newAngle;
 }

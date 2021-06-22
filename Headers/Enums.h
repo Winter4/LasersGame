@@ -6,6 +6,8 @@ namespace Textures {
 		Field,
 		LaserGun,
 		Mirror,
-		Bricks
+		Bricks,
+		Button,
+		Target
 	};
 }
