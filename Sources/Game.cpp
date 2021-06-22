@@ -32,10 +32,13 @@ Game::Game() : window(sf::VideoMode(1200, 800), "LASERS")
 	mirrors = new MirrorsContainer(&window, texturesHolder.get(Textures::Mirror));
 	button = new Button(&window, { 165, 10 }, texturesHolder.get(Textures::Button), font);
 	target = new Target(&window, { 550, 250 }, texturesHolder.get(Textures::Target));
+	timer = new Timer(&window, font);
 }
 
 void Game::run()
 {
+	timer->restart();
+
 	while (window.isOpen()) {
 		processEvents();
 		update();
@@ -91,6 +94,14 @@ void Game::update()
 	system("cls");
 	std::cout << "Mouse X Y:  " << sf::Mouse::getPosition(window).x << "  " << sf::Mouse::getPosition(window).y << std::endl << std::endl;
 
+	gameOver = timer->getTime() <= 0;
+
+	if (timer->getElapsedTime() >= sf::seconds(1)) {
+		timer->substractSecond();
+		timer->restart();
+	}
+
+
 	if (makeMove) calcLaserTarget();
 	if (gameOver) button->end();
 }
@@ -109,6 +120,7 @@ void Game::render()
 
 	button->draw();
 	target->draw();
+	timer->draw();
 
 	window.display();
 	if (makeMove) {

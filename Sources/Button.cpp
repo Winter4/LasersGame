@@ -20,4 +20,5 @@ bool Button::processMouseClick(sf::Vector2i point)
 void Button::end()
 {
 	text.setString("Game over\nClose the window");
+	text.move(-30, -15);
 }

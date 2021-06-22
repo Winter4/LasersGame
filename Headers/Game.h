@@ -12,6 +12,7 @@
 #include "MirrorsContainer.h"
 #include "Button.h"
 #include "Target.h"
+#include "Timer.h"
 
 class Game {
 private:
@@ -27,6 +28,7 @@ private:
 	MirrorsContainer* mirrors;
 	Button* button;
 	Target* target;
+	Timer* timer;
 
 	int activeMirror;
 	bool makeMove;
